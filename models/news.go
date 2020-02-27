@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"regexp"
+	"strings"
 )
 
 type (
@@ -53,7 +55,15 @@ type News struct {
 	Link         string `json:"link"`
 }
 
+func GetFilteredNews(db *sql.DB, id int, filter string) []News {
+	return getNews(db, id, filter)
+}
+
 func GetNews(db *sql.DB, id int) []News {
+	return getNews(db, id, ``)
+}
+
+func getNews(db *sql.DB, id int, filter string) []News {
 	sql := "SELECT rss FROM section WHERE id=$1"
 
 	row := db.QueryRow(sql, id)
@@ -74,16 +84,42 @@ func GetNews(db *sql.DB, id int) []News {
 	}
 
 	for _, channelItem := range document.Channel.Item {
-		n := News{
-			Title:        channelItem.Title,
-			Descripition: channelItem.Description,
-			Link:         channelItem.Link,
-		}
+		if !match(channelItem, strings.ToLower(filter)) {
+			n := News{
+				Title:        channelItem.Title,
+				Descripition: channelItem.Description,
+				Link:         channelItem.Link,
+			}
 
-		results = append(results, n)
+			results = append(results, n)
+		}
 	}
 
 	return results
+}
+
+func match(i item, filter string) bool {
+	if filter == `` {
+		return false
+	}
+
+	var matched bool
+	var err error
+	matched, err = regexp.MatchString(filter, strings.ToLower(i.Title))
+
+	if err != nil {
+		panic(err)
+	}
+
+	if !matched {
+		matched, err = regexp.MatchString(filter, strings.ToLower(i.Description))
+
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return matched
 }
 
 func retrieveNews(uri string) (*rssDocument, error) {

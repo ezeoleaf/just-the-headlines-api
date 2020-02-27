@@ -15,3 +15,11 @@ func GetNews(db *sql.DB) echo.HandlerFunc {
 		return c.JSON(http.StatusOK, models.GetNews(db, id))
 	}
 }
+
+func GetFilteredNews(db *sql.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id, _ := strconv.Atoi(c.Param("id"))
+		filter := c.Param("filter")
+		return c.JSON(http.StatusOK, models.GetFilteredNews(db, id, filter))
+	}
+}
