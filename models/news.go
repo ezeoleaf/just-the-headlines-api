@@ -107,6 +107,7 @@ func match(i item, filters string) bool {
 
 	filterList := strings.Split(filters, separator)
 	for _, filter := range filterList {
+		filter = strings.ToLower(strings.TrimSpace(filter))
 		matched, err := regexp.MatchString(filter, strings.ToLower(i.Title))
 
 		if err != nil {
