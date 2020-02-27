@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+const separator = `,`
+
 type (
 	item struct {
 		XMLName     xml.Name `xml:"item"`
@@ -84,7 +86,7 @@ func getNews(db *sql.DB, id int, filter string) []News {
 	}
 
 	for _, channelItem := range document.Channel.Item {
-		if !match(channelItem, strings.ToLower(filter)) {
+		if !match(channelItem, filter) {
 			n := News{
 				Title:        channelItem.Title,
 				Descripition: channelItem.Description,
@@ -98,28 +100,35 @@ func getNews(db *sql.DB, id int, filter string) []News {
 	return results
 }
 
-func match(i item, filter string) bool {
-	if filter == `` {
+func match(i item, filters string) bool {
+	if filters == `` {
 		return false
 	}
 
-	var matched bool
-	var err error
-	matched, err = regexp.MatchString(filter, strings.ToLower(i.Title))
+	filterList := strings.Split(filters, separator)
+	for _, filter := range filterList {
+		matched, err := regexp.MatchString(filter, strings.ToLower(i.Title))
 
-	if err != nil {
-		panic(err)
-	}
+		if err != nil {
+			panic(err)
+		}
 
-	if !matched {
+		if matched {
+			return true
+		}
+
 		matched, err = regexp.MatchString(filter, strings.ToLower(i.Description))
 
 		if err != nil {
 			panic(err)
 		}
+
+		if matched {
+			return true
+		}
 	}
 
-	return matched
+	return false
 }
 
 func retrieveNews(uri string) (*rssDocument, error) {
