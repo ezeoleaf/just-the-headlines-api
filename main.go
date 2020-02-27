@@ -7,6 +7,8 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 
+	"github.com/ezeoleaf/just-the-headlines-api/handlers"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -46,7 +48,8 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "JTH API")
 	})
-	// e.GET("/newspapers", handlers.)
+	e.GET("/newspapers", handlers.GetNewspapers(db))
+	e.GET("/newspapers/:id", handlers.GetNewspaper(db))
 }
 
 func migrate(db *sql.DB) {
