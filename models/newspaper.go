@@ -28,6 +28,10 @@ func GetNewspapers(db *sql.DB) Newspapers {
 
 	defer rows.Close()
 
+	return newspapersFromRows(rows)
+}
+
+func newspapersFromRows(rows *sql.Rows) Newspapers {
 	result := Newspapers{}
 	for rows.Next() {
 		n := Newspaper{}
@@ -39,6 +43,19 @@ func GetNewspapers(db *sql.DB) Newspapers {
 	}
 
 	return result
+}
+
+func GetNewspapersByCountry(db *sql.DB, country_code string) Newspapers {
+	sql := `SELECT n.id, n.name, c.name, c.code FROM newspaper n INNER JOIN country c ON(n.country_id = c.id) WHERE UPPER(c.code) LIKE $1 || '%'`
+
+	rows, err := db.Query(sql, country_code)
+	if err != nil {
+		panic(err)
+	}
+
+	defer rows.Close()
+
+	return newspapersFromRows(rows)
 }
 
 func GetNewspaper(db *sql.DB, id int) Newspaper {
