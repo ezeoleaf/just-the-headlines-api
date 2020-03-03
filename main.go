@@ -50,13 +50,13 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 	})
 	e.GET("/newspapers", handlers.GetNewspapers(db))
 	e.GET("/newspapers/:id", handlers.GetNewspaper(db))
-	e.GET("/newspapers_by_country/:code", handlers.GetNewspapersByCountry(db))
-	e.GET("/newspapers_by_name/:name", handlers.GetNewspapersByName(db))
+	e.GET("/newspapers/country/:code", handlers.GetNewspapersByCountry(db))
+	e.GET("/newspapers/name/:name", handlers.GetNewspapersByName(db))
 
 	e.GET("/news/:id", handlers.GetNews(db))
 	e.GET("/news/:id/:filter", handlers.GetFilteredNews(db))
 
-	e.GET("/sections_by_name/:name", handlers.GetSectionsByName(db))
+	e.GET("/sections/name/:name", handlers.GetSectionsByName(db))
 }
 
 func migrate(db *sql.DB) {
