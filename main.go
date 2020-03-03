@@ -55,6 +55,8 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 
 	e.GET("/news/:id", handlers.GetNews(db))
 	e.GET("/news/:id/:filter", handlers.GetFilteredNews(db))
+
+	e.GET("/sections_by_name/:name", handlers.GetSectionsByName(db))
 }
 
 func migrate(db *sql.DB) {

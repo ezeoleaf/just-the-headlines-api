@@ -82,7 +82,7 @@ func GetNewspaper(db *sql.DB, id int) Newspaper {
 		panic(e)
 	}
 
-	sections := GetSections(db, id)
+	sections := GetSectionsByNewspaper(db, id)
 
 	n.Sections = sections.Sections
 
