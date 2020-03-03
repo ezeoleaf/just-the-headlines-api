@@ -45,6 +45,19 @@ func newspapersFromRows(rows *sql.Rows) Newspapers {
 	return result
 }
 
+func GetNewspapersByName(db *sql.DB, name string) Newspapers {
+	sql := `SELECT n.id, n.name, c.name, c.code FROM newspaper n INNER JOIN country c ON(n.country_id = c.id) WHERE UPPER(n.name) LIKE '%' || $1 || '%'`
+
+	rows, err := db.Query(sql, name)
+	if err != nil {
+		panic(err)
+	}
+
+	defer rows.Close()
+
+	return newspapersFromRows(rows)
+}
+
 func GetNewspapersByCountry(db *sql.DB, country_code string) Newspapers {
 	sql := `SELECT n.id, n.name, c.name, c.code FROM newspaper n INNER JOIN country c ON(n.country_id = c.id) WHERE UPPER(c.code) LIKE $1 || '%'`
 

@@ -23,6 +23,13 @@ func GetNewspapersByCountry(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
+func GetNewspapersByName(db *sql.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		name := strings.ToUpper(c.Param("name"))
+		return c.JSON(http.StatusOK, models.GetNewspapersByName(db, name))
+	}
+}
+
 func GetNewspaper(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
