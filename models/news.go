@@ -66,9 +66,7 @@ func GetNews(db *sql.DB, id int) []News {
 }
 
 func getNews(db *sql.DB, id int, filter string) []News {
-	sql := "SELECT rss FROM section WHERE id=$1"
-
-	row := db.QueryRow(sql, id)
+	row := db.QueryRow(NewsByID, id)
 
 	var uri string
 

@@ -2,8 +2,10 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 )
 
+// Section contains information related to the section table in the database
 type Section struct {
 	ID        int    `json:"id"`
 	Name      string `json:"name"`
@@ -12,6 +14,7 @@ type Section struct {
 	Newspaper string `json:"newspaper"`
 }
 
+// Sections is a list of Section
 type Sections struct {
 	Sections []Section `json:"sections"`
 }
@@ -32,12 +35,9 @@ func sectionsFromRows(rows *sql.Rows) Sections {
 	return sections
 }
 
+// GetSectionsByName returns an instance of Sections filtered by section name
 func GetSectionsByName(db *sql.DB, name string) Sections {
-	sql := `SELECT s.id, s.name, s.rss, s.failed, n.name FROM section s
-	INNER JOIN newspaper n ON s.newspaper_id = n.id
-	WHERE UPPER(s.name) LIKE '%' || $1 || '%'`
-
-	rows, err := db.Query(sql, name)
+	rows, err := db.Query(SectionsByName, name)
 	if err != nil {
 		panic(err)
 	}
@@ -47,10 +47,9 @@ func GetSectionsByName(db *sql.DB, name string) Sections {
 	return sectionsFromRows(rows)
 }
 
-func GetSectionsByNewspaper(db *sql.DB, newspaper_id int) Sections {
-	sql := `SELECT id, name, rss, failed, "" FROM section WHERE newspaper_id=$1`
-
-	rows, err := db.Query(sql, newspaper_id)
+// GetSectionsByNewspaper returns an instance of Sections filtered by newspaperID
+func GetSectionsByNewspaper(db *sql.DB, newspaperID int) Sections {
+	rows, err := db.Query(SectionsByNewspaper, newspaperID)
 	if err != nil {
 		panic(err)
 	}
@@ -60,6 +59,11 @@ func GetSectionsByNewspaper(db *sql.DB, newspaper_id int) Sections {
 	return sectionsFromRows(rows)
 }
 
-func GetSectionsByTag(db *sql.DB, tag string) {
+// GetSectionsByTags returns an instances of Sections that are mapped to a tag
+func GetSectionsByTags(db *sql.DB, tags string) Sections {
+	tagIDs := GetIDsFromTags(db, tags)
 
+	fmt.Println(tagIDs)
+
+	return Sections{}
 }

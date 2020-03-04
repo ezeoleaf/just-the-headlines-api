@@ -19,8 +19,7 @@ type Newspapers struct {
 }
 
 func GetNewspapers(db *sql.DB) Newspapers {
-	sql := "SELECT n.id, n.name, c.name, c.code FROM newspaper n INNER JOIN country c ON(n.country_id = c.id)"
-	rows, err := db.Query(sql)
+	rows, err := db.Query(NewspapersAll)
 
 	if err != nil {
 		panic(err)
@@ -46,9 +45,7 @@ func newspapersFromRows(rows *sql.Rows) Newspapers {
 }
 
 func GetNewspapersByName(db *sql.DB, name string) Newspapers {
-	sql := `SELECT n.id, n.name, c.name, c.code FROM newspaper n INNER JOIN country c ON(n.country_id = c.id) WHERE UPPER(n.name) LIKE '%' || $1 || '%'`
-
-	rows, err := db.Query(sql, name)
+	rows, err := db.Query(NewspapersByName, name)
 	if err != nil {
 		panic(err)
 	}
@@ -58,10 +55,8 @@ func GetNewspapersByName(db *sql.DB, name string) Newspapers {
 	return newspapersFromRows(rows)
 }
 
-func GetNewspapersByCountry(db *sql.DB, country_code string) Newspapers {
-	sql := `SELECT n.id, n.name, c.name, c.code FROM newspaper n INNER JOIN country c ON(n.country_id = c.id) WHERE UPPER(c.code) LIKE $1 || '%'`
-
-	rows, err := db.Query(sql, country_code)
+func GetNewspapersByCountry(db *sql.DB, countryCode string) Newspapers {
+	rows, err := db.Query(NewspapersByCountry, countryCode)
 	if err != nil {
 		panic(err)
 	}
@@ -72,10 +67,9 @@ func GetNewspapersByCountry(db *sql.DB, country_code string) Newspapers {
 }
 
 func GetNewspaper(db *sql.DB, id int) Newspaper {
-	sql := "SELECT n.id, n.name, c.name, c.code FROM newspaper n INNER JOIN country c ON(n.country_id = c.id) WHERE n.id=$1"
 	n := Newspaper{}
 
-	row := db.QueryRow(sql, id)
+	row := db.QueryRow(NewspaperByID, id)
 	e := row.Scan(&n.ID, &n.Name, &n.Country, &n.CountryCode)
 
 	if e != nil {
