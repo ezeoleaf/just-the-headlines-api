@@ -33,3 +33,8 @@ const NewspapersAll = `SELECT n.id, n.name, c.name, c.code FROM newspaper n INNE
 
 // NewspaperByID returns a single newspaper filtering by newspaper.id
 const NewspaperByID = `SELECT n.id, n.name, c.name, c.code FROM newspaper n INNER JOIN country c ON(n.country_id = c.id) WHERE n.id=$1`
+
+// Tags Queries
+
+// TagsIDs returns the category ids for a list of tags
+const TagsIDs = `SELECT id FROM category WHERE UPPER(name) in ($1)`
