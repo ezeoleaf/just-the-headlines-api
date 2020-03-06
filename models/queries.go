@@ -18,7 +18,7 @@ WHERE UPPER(s.name) LIKE '%' || $1 || '%'`
 // News Queries
 
 // NewsByID returns a RSS url for a section.id
-const NewsByID = `SELECT rss FROM section WHERE id=$1`
+const NewsByID = `SELECT s.rss, s.name, n.name FROM section s INNER JOIN newspaper n ON(s.newspaper_id = n.id) WHERE s.id=$1`
 
 // Newspapers Queries
 

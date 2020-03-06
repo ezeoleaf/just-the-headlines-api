@@ -23,3 +23,18 @@ func GetFilteredNews(db *sql.DB) echo.HandlerFunc {
 		return c.JSON(http.StatusOK, models.GetFilteredNews(db, id, filter))
 	}
 }
+
+func GetMultipleNews(db *sql.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		sections := c.Param("sections")
+		return c.JSON(http.StatusOK, models.GetMultipleNews(db, sections, ``))
+	}
+}
+
+func GetFilteredMultipleNews(db *sql.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		sections := c.Param("sections")
+		filter := c.Param("filter")
+		return c.JSON(http.StatusOK, models.GetMultipleNews(db, sections, filter))
+	}
+}

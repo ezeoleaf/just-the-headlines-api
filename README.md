@@ -15,3 +15,7 @@ It lets you retrieve Newspapers, Sections and News via RSS
 
 ## Filtered News
 ![FilteredNews](https://github.com/ezeoleaf/just-the-headlines-api/blob/master/docs/filteredNews.png)
+
+## Multiple News - Different Newspaper and Sections
+![MultipleSections](https://github.com/ezeoleaf/just-the-headlines-api/blob/master/docs/multipleNews.png)
+![MultipleNewspapers](https://github.com/ezeoleaf/just-the-headlines-api/blob/master/docs/multipleNewspaper.png)

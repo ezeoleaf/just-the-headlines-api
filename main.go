@@ -55,6 +55,8 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 
 	e.GET("/news/:id", handlers.GetNews(db))
 	e.GET("/news/:id/:filter", handlers.GetFilteredNews(db))
+	e.GET("/news/multiple/:sections/:filter", handlers.GetFilteredMultipleNews(db))
+	e.GET("/news/multiple/:sections", handlers.GetMultipleNews(db))
 
 	e.GET("/sections/name/:name", handlers.GetSectionsByName(db))
 }

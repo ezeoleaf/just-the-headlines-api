@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -55,6 +56,8 @@ type News struct {
 	Title        string `json:"title"`
 	Descripition string `json:"description"`
 	Link         string `json:"link"`
+	Newspaper    string `json:"newspaper"`
+	Section      string `json:"section"`
 }
 
 func GetFilteredNews(db *sql.DB, id int, filter string) []News {
@@ -65,12 +68,27 @@ func GetNews(db *sql.DB, id int) []News {
 	return getNews(db, id, ``)
 }
 
+func GetMultipleNews(db *sql.DB, sections string, filter string) []News {
+	results := []News{}
+
+	sectionList := strings.Split(sections, separator)
+	for _, section := range sectionList {
+		sectionID, _ := strconv.Atoi(section)
+		news := getNews(db, sectionID, filter)
+		results = append(results, news...)
+	}
+
+	return results
+}
+
 func getNews(db *sql.DB, id int, filter string) []News {
 	row := db.QueryRow(NewsByID, id)
 
 	var uri string
+	var newspaper string
+	var section string
 
-	err := row.Scan(&uri)
+	err := row.Scan(&uri, &section, &newspaper)
 
 	if err != nil {
 		panic(err)
@@ -89,6 +107,8 @@ func getNews(db *sql.DB, id int, filter string) []News {
 				Title:        channelItem.Title,
 				Descripition: channelItem.Description,
 				Link:         channelItem.Link,
+				Newspaper:    newspaper,
+				Section:      section,
 			}
 
 			results = append(results, n)
