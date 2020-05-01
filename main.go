@@ -3,19 +3,24 @@ package main
 import (
 	"database/sql"
 	"net/http"
-
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"os"
 
 	"github.com/ezeoleaf/just-the-headlines-api/handlers"
+	"github.com/joho/godotenv"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const storageName = "jth.db"
-const driver = "sqlite3"
-
 func startServer() {
+	err := godotenv.Load()
+	if err != nil {
+		panic("Error loading .env file")
+	}
+
+	storageName := os.Getenv("DB_NAME")
+
 	db := initDB(storageName)
 
 	e := echo.New()
@@ -29,7 +34,7 @@ func startServer() {
 }
 
 func initDB(fp string) *sql.DB {
-	db, err := sql.Open(driver, fp)
+	db, err := sql.Open(os.Getenv("DB_DRIVER"), fp)
 
 	if err != nil {
 		panic(err)
