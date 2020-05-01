@@ -1,0 +1,18 @@
+-- Return to original state
+DELETE FROM section;
+DELETE FROM newspaper;
+DELETE FROM country;
+
+-- Populate countries
+INSERT INTO country(id, name, code) VALUES
+(1, "Argentina", "AR"),
+(2, "Spain", "ES"),
+(3, "United States", "US");
+
+-- Populate newspapers
+INSERT INTO newspaper(id, name, country_id) VALUES
+(1,'The New York Times',3);
+
+-- Populate sections
+INSERT INTO section(name, rss, newspaper_id) VALUES
+('Home Page (U.S.)','http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',1);
