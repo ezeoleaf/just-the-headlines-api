@@ -64,6 +64,9 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 	e.GET("/news/multiple/:sections", handlers.GetMultipleNews(db))
 
 	e.GET("/sections/name/:name", handlers.GetSectionsByName(db))
+
+	e.POST("/user", handlers.PostUser(db))
+	e.POST("/user/login", handlers.LoginUser(db))
 }
 
 func migrate(db *sql.DB) {

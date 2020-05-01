@@ -41,3 +41,4 @@ const TagsIDs = `SELECT id FROM category WHERE UPPER(name) in ($1)`
 
 // Users Queries
 const newUser = `INSERT INTO user(email, username, password) VALUES(?, ?, ?)`
+const loginUser = `SELECT id, username, password FROM user WHERE username=$1`
