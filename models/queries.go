@@ -38,3 +38,6 @@ const NewspaperByID = `SELECT n.id, n.name, c.name, c.code FROM newspaper n INNE
 
 // TagsIDs returns the category ids for a list of tags
 const TagsIDs = `SELECT id FROM category WHERE UPPER(name) in ($1)`
+
+// Users Queries
+const newUser = `INSERT INTO user(email, username, password) VALUES(?, ?, ?)`

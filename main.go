@@ -94,6 +94,13 @@ func migrate(db *sql.DB) {
 		section_id INTEGER NOT NULL REFERENCES section(id),
 		category_id INTEGER NOT NULL REFERENCES category(id)
 	);
+	CREATE TABLE IF NOT EXISTS user(
+		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+		username VARCHAR NOT NULL,
+		email VARCHAR NOT NULL,
+		password VARCHAR NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)
 	`
 
 	_, err := db.Exec(sql)
