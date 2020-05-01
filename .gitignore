@@ -2,3 +2,4 @@
 main
 just-the-headlines-api
 .env
+data/*.sql
