@@ -25,7 +25,7 @@ func startServer() {
 
 	initRoutes(e, db)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(os.Getenv("APP_PORT")))
 }
 
 func initDB(fp string) *sql.DB {
@@ -48,17 +48,17 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "JTH API")
 	})
-	e.GET("/newspapers", handlers.GetNewspapers(db), IsLoggedIn)
-	e.GET("/newspapers/:id", handlers.GetNewspaper(db), IsLoggedIn)
-	e.GET("/newspapers/country/:code", handlers.GetNewspapersByCountry(db), IsLoggedIn)
-	e.GET("/newspapers/name/:name", handlers.GetNewspapersByName(db), IsLoggedIn)
+	e.GET("/newspapers", handlers.GetNewspapers(db), isLoggedIn)
+	e.GET("/newspapers/:id", handlers.GetNewspaper(db), isLoggedIn)
+	e.GET("/newspapers/country/:code", handlers.GetNewspapersByCountry(db), isLoggedIn)
+	e.GET("/newspapers/name/:name", handlers.GetNewspapersByName(db), isLoggedIn)
 
-	e.GET("/news/:id", handlers.GetNews(db), IsLoggedIn)
-	e.GET("/news/:id/:filter", handlers.GetFilteredNews(db), IsLoggedIn)
-	e.GET("/news/multiple/:sections/:filter", handlers.GetFilteredMultipleNews(db), IsLoggedIn)
-	e.GET("/news/multiple/:sections", handlers.GetMultipleNews(db), IsLoggedIn)
+	e.GET("/news/:id", handlers.GetNews(db), isLoggedIn)
+	e.GET("/news/:id/:filter", handlers.GetFilteredNews(db), isLoggedIn)
+	e.GET("/news/multiple/:sections/:filter", handlers.GetFilteredMultipleNews(db), isLoggedIn)
+	e.GET("/news/multiple/:sections", handlers.GetMultipleNews(db), isLoggedIn)
 
-	e.GET("/sections/name/:name", handlers.GetSectionsByName(db), IsLoggedIn)
+	e.GET("/sections/name/:name", handlers.GetSectionsByName(db), isLoggedIn)
 
 	e.POST("/user", handlers.PostUser(db))
 	e.POST("/user/login", handlers.LoginUser(db))

@@ -7,6 +7,6 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
-var IsLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
+var isLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
 	SigningKey: []byte(os.Getenv("SECRET_WORD")),
 })
