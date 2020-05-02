@@ -6,19 +6,14 @@ import (
 	"os"
 
 	"github.com/ezeoleaf/just-the-headlines-api/handlers"
-	"github.com/joho/godotenv"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 
+	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func startServer() {
-	err := godotenv.Load()
-	if err != nil {
-		panic("Error loading .env file")
-	}
-
 	storageName := os.Getenv("DB_NAME")
 
 	db := initDB(storageName)
@@ -53,17 +48,17 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "JTH API")
 	})
-	e.GET("/newspapers", handlers.GetNewspapers(db))
-	e.GET("/newspapers/:id", handlers.GetNewspaper(db))
-	e.GET("/newspapers/country/:code", handlers.GetNewspapersByCountry(db))
-	e.GET("/newspapers/name/:name", handlers.GetNewspapersByName(db))
+	e.GET("/newspapers", handlers.GetNewspapers(db), IsLoggedIn)
+	e.GET("/newspapers/:id", handlers.GetNewspaper(db), IsLoggedIn)
+	e.GET("/newspapers/country/:code", handlers.GetNewspapersByCountry(db), IsLoggedIn)
+	e.GET("/newspapers/name/:name", handlers.GetNewspapersByName(db), IsLoggedIn)
 
-	e.GET("/news/:id", handlers.GetNews(db))
-	e.GET("/news/:id/:filter", handlers.GetFilteredNews(db))
-	e.GET("/news/multiple/:sections/:filter", handlers.GetFilteredMultipleNews(db))
-	e.GET("/news/multiple/:sections", handlers.GetMultipleNews(db))
+	e.GET("/news/:id", handlers.GetNews(db), IsLoggedIn)
+	e.GET("/news/:id/:filter", handlers.GetFilteredNews(db), IsLoggedIn)
+	e.GET("/news/multiple/:sections/:filter", handlers.GetFilteredMultipleNews(db), IsLoggedIn)
+	e.GET("/news/multiple/:sections", handlers.GetMultipleNews(db), IsLoggedIn)
 
-	e.GET("/sections/name/:name", handlers.GetSectionsByName(db))
+	e.GET("/sections/name/:name", handlers.GetSectionsByName(db), IsLoggedIn)
 
 	e.POST("/user", handlers.PostUser(db))
 	e.POST("/user/login", handlers.LoginUser(db))

@@ -8,6 +8,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 
+	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/crypto/bcrypt"
 )
 
