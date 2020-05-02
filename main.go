@@ -53,7 +53,8 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 	e.GET("/newspapers/country/:code", handlers.GetNewspapersByCountry(db), isLoggedIn)
 	e.GET("/newspapers/name/:name", handlers.GetNewspapersByName(db), isLoggedIn)
 
-	e.GET("/news/:id", handlers.GetNews(db), isLoggedIn)
+	// e.GET("/news", handlers.GetNews(db), isLoggedIn)
+	e.GET("/news/:id", handlers.GetNewsBySection(db), isLoggedIn)
 	e.GET("/news/:id/:filter", handlers.GetFilteredNews(db), isLoggedIn)
 	e.GET("/news/multiple/:sections/:filter", handlers.GetFilteredMultipleNews(db), isLoggedIn)
 	e.GET("/news/multiple/:sections", handlers.GetMultipleNews(db), isLoggedIn)
@@ -61,6 +62,9 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 	e.GET("/sections/name/:name", handlers.GetSectionsByName(db), isLoggedIn)
 
 	e.GET("/filters", handlers.GetFilters(db), isLoggedIn)
+
+	e.POST("/subscribe", handlers.Subscribe(db, true), isLoggedIn)
+	e.POST("/unsubscribe", handlers.Subscribe(db, false), isLoggedIn)
 
 	e.POST("/filter", handlers.PostFilter(db), isLoggedIn)
 	e.POST("/filter/attach", handlers.UserFilter(db, true), isLoggedIn)
@@ -75,28 +79,33 @@ func migrate(db *sql.DB) {
 	CREATE TABLE IF NOT EXISTS country(
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		name VARCHAR NOT NULL,
-		code VARCHAR NOT NULL
+		code VARCHAR NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 	CREATE TABLE IF NOT EXISTS newspaper(
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		name VARCHAR NOT NULL,
-		country_id INTEGER REFERENCES country(id)
+		country_id INTEGER REFERENCES country(id),
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 	CREATE TABLE IF NOT EXISTS section(
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		name VARCHAR NOT NULL,
 		rss VARCHAR NOT NULL,
 		failed BOOLEAN DEFAULT FALSE,
-		newspaper_id INTEGER REFERENCES newspaper(id)	
+		newspaper_id INTEGER REFERENCES newspaper(id),
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 	CREATE TABLE IF NOT EXISTS category(
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-		name VARCHAR NOT NULL UNIQUE
+		name VARCHAR NOT NULL UNIQUE,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 	CREATE TABLE IF NOT EXISTS tag(
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		section_id INTEGER NOT NULL REFERENCES section(id),
-		category_id INTEGER NOT NULL REFERENCES category(id)
+		category_id INTEGER NOT NULL REFERENCES category(id),
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 	CREATE TABLE IF NOT EXISTS filter(
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -113,7 +122,14 @@ func migrate(db *sql.DB) {
 	CREATE TABLE IF NOT EXISTS user_filter(
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		filter_id INTEGER NOT NULL REFERENCES filter(id),
-		user_id INTEGER NOT NULL REFERENCES user(id)
+		user_id INTEGER NOT NULL REFERENCES user(id),
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	);
+	CREATE TABLE IF NOT EXISTS subscription(
+		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+		user_id INTEGER NOT NULL REFERENCES user(id),
+		section_id INTEGER NOT NULL REFERENCES section(id),
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	);
 	`
 

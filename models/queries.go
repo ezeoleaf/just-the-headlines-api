@@ -15,6 +15,9 @@ const SectionsByName = `SELECT s.id, s.name, s.rss, s.failed, n.name FROM sectio
 INNER JOIN newspaper n ON s.newspaper_id = n.id
 WHERE UPPER(s.name) LIKE '%' || $1 || '%'`
 
+const subscribeUser = `INSERT INTO subscription(section_id, user_id) VALUES(?, ?)`
+const unsubscribeUser = `DELETE FROM subscription WHERE section_id=? AND user_id=?`
+
 // News Queries
 
 // NewsByID returns a RSS url for a section.id

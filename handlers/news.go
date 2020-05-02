@@ -9,10 +9,10 @@ import (
 	"github.com/labstack/echo"
 )
 
-func GetNews(db *sql.DB) echo.HandlerFunc {
+func GetNewsBySection(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
-		return c.JSON(http.StatusOK, models.GetNews(db, id))
+		return c.JSON(http.StatusOK, models.GetNewsBySection(db, id))
 	}
 }
 

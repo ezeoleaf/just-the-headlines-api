@@ -67,3 +67,27 @@ func GetSectionsByTags(db *sql.DB, tags string) Sections {
 
 	return Sections{}
 }
+
+func Subscribe(db *sql.DB, sectionID int64, userID int64, subscribe bool) (int64, error) {
+	var sql string
+	if subscribe {
+		sql = subscribeUser
+	} else {
+		sql = unsubscribeUser
+	}
+
+	s, e := db.Prepare(sql)
+	if e != nil {
+		panic(e)
+	}
+
+	defer s.Close()
+
+	r, e := s.Exec(sectionID, userID)
+
+	if e != nil {
+		panic(e)
+	}
+
+	return r.RowsAffected()
+}

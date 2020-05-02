@@ -64,7 +64,7 @@ func GetFilteredNews(db *sql.DB, id int, filter string) []News {
 	return getNews(db, id, filter)
 }
 
-func GetNews(db *sql.DB, id int) []News {
+func GetNewsBySection(db *sql.DB, id int) []News {
 	return getNews(db, id, ``)
 }
 
