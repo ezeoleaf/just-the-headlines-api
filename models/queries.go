@@ -42,3 +42,9 @@ const TagsIDs = `SELECT id FROM category WHERE UPPER(name) in ($1)`
 // Users Queries
 const newUser = `INSERT INTO user(email, username, password) VALUES(?, ?, ?)`
 const loginUser = `SELECT id, username, password FROM user WHERE username=$1`
+const attachFilter = `INSERT INTO user_filter(user_id, filter_id) VALUES(?, ?)`
+const detachFilter = `DELETE FROM user_filter WHERE user_id=? AND filter_id=?`
+const getUserFilter = `SELECT count(id) FROM user_filter WHERE user_id=($1) AND filter_id=($2)`
+
+// Filter Queries
+const searchFilter = `SELECT id FROM filter WHERE UPPER(name) = UPPER($1)`

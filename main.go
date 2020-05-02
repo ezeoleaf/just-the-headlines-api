@@ -60,6 +60,8 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 
 	e.GET("/sections/name/:name", handlers.GetSectionsByName(db), isLoggedIn)
 
+	e.POST("/filter", handlers.PostFilter(db), isLoggedIn)
+
 	e.POST("/user", handlers.PostUser(db))
 	e.POST("/user/login", handlers.LoginUser(db))
 }
@@ -92,13 +94,23 @@ func migrate(db *sql.DB) {
 		section_id INTEGER NOT NULL REFERENCES section(id),
 		category_id INTEGER NOT NULL REFERENCES category(id)
 	);
+	CREATE TABLE IF NOT EXISTS filter(
+		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+		filter VARCHAR NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	);
 	CREATE TABLE IF NOT EXISTS user(
 		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
 		username VARCHAR NOT NULL,
 		email VARCHAR NOT NULL,
 		password VARCHAR NOT NULL,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-	)
+	);
+	CREATE TABLE IF NOT EXISTS user_filter(
+		id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+		filter_id INTEGER NOT NULL REFERENCES filter(id),
+		user_id INTEGER NOT NULL REFERENCES user(id)
+	);
 	`
 
 	_, err := db.Exec(sql)
