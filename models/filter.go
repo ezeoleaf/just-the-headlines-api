@@ -5,6 +5,39 @@ import (
 	"strings"
 )
 
+type Filter struct {
+	ID     int64  `json:"id"`
+	Filter string `json:"name"`
+}
+
+type FilterCollection struct {
+	Filters []Filter `json:"filters"`
+}
+
+func GetFilters(db *sql.DB) FilterCollection {
+	rows, err := db.Query(getFilters)
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer rows.Close()
+
+	result := FilterCollection{}
+	for rows.Next() {
+		f := Filter{}
+		e := rows.Scan(&f.ID, &f.Filter)
+
+		if e != nil {
+			panic(e)
+		}
+
+		result.Filters = append(result.Filters, f)
+	}
+
+	return result
+}
+
 func PostFilter(db *sql.DB, filter string, userID int64) (int64, error) {
 	var filterID int64
 

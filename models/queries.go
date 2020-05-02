@@ -49,3 +49,4 @@ const getUserFilter = `SELECT id FROM user_filter WHERE user_id=($1) AND filter_
 // Filter Queries
 const searchFilter = `SELECT id FROM filter WHERE UPPER(filter) = UPPER($1)`
 const createFilter = `INSERT INTO filter(filter) VALUES(?)`
+const getFilters = `SELECT id, filter FROM filter`

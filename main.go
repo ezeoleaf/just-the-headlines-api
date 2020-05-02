@@ -60,6 +60,8 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 
 	e.GET("/sections/name/:name", handlers.GetSectionsByName(db), isLoggedIn)
 
+	e.GET("/filters", handlers.GetFilters(db), isLoggedIn)
+
 	e.POST("/filter", handlers.PostFilter(db), isLoggedIn)
 	e.POST("/filter/attach", handlers.UserFilter(db, true), isLoggedIn)
 	e.POST("/filter/detach", handlers.UserFilter(db, false), isLoggedIn)

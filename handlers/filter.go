@@ -8,6 +8,12 @@ import (
 	"github.com/labstack/echo"
 )
 
+func GetFilters(db *sql.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		return c.JSON(http.StatusOK, models.GetFilters(db))
+	}
+}
+
 func PostFilter(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// Get user id from JWT
