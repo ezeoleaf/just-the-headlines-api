@@ -121,6 +121,20 @@ func AttachFilter(db *sql.DB, userID int64, filterID int64) (int64, error) {
 	return userFilterID, filterErr
 }
 
-// func DetachFilter(userID int64, filterID int64) (int64, error) {
+func DetachFilter(db *sql.DB, userID int64, filterID int64) (int64, error) {
+	smtm, err := db.Prepare(detachFilter)
 
-// }
+	if err != nil {
+		panic(err)
+	}
+
+	defer smtm.Close()
+
+	r, err := smtm.Exec(userID, filterID)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return r.RowsAffected()
+}

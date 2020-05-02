@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/ezeoleaf/just-the-headlines-api/models"
 	"github.com/labstack/echo"
@@ -47,8 +48,27 @@ func LoginUser(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-// func UserFilter(db *sql.DB, attach bool) echo.HandlerFunc {
-// 	return func(c echo.Context) error {
+func UserFilter(db *sql.DB, attach bool) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		filterID, _ := strconv.ParseInt(c.FormValue("filterID"), 10, 64)
+		userID, _ := getUserFromJWT(c)
 
-// 	}
-// }
+		var id int64
+		var err error
+
+		if attach {
+			id, err = models.AttachFilter(db, userID, filterID)
+		} else {
+			id, err = models.DetachFilter(db, userID, filterID)
+		}
+
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, H{
+			"success": true,
+			"id":      id,
+		})
+	}
+}
