@@ -60,11 +60,11 @@ type News struct {
 	Section      string `json:"section"`
 }
 
-func GetFilteredNews(db *sql.DB, id int, filter string) []News {
+func GetFilteredNews(db *sql.DB, id int64, filter string) []News {
 	return getNews(db, id, filter)
 }
 
-func GetNewsBySection(db *sql.DB, id int) []News {
+func GetNewsBySection(db *sql.DB, id int64) []News {
 	return getNews(db, id, ``)
 }
 
@@ -73,7 +73,7 @@ func GetMultipleNews(db *sql.DB, sections string, filter string) []News {
 
 	sectionList := strings.Split(sections, separator)
 	for _, section := range sectionList {
-		sectionID, _ := strconv.Atoi(section)
+		sectionID, _ := strconv.ParseInt(section, 10, 64)
 		news := getNews(db, sectionID, filter)
 		results = append(results, news...)
 	}
@@ -81,7 +81,47 @@ func GetMultipleNews(db *sql.DB, sections string, filter string) []News {
 	return results
 }
 
-func getNews(db *sql.DB, id int, filter string) []News {
+func getMultipleNews(db *sql.DB, sections []int64, filter string) []News {
+	results := []News{}
+
+	for _, section := range sections {
+		news := getNews(db, section, filter)
+		results = append(results, news...)
+	}
+
+	return results
+}
+
+func GetNews(db *sql.DB, userID int64) []News {
+	filters := getFiltersByUser(db, userID)
+	sections := getSectionsByUser(db, userID)
+
+	results := []News{}
+	for _, section := range sections.Sections {
+		document, err := retrieveNews(section.RSS)
+		if err != nil {
+			return nil
+		}
+
+		for _, channelItem := range document.Channel.Item {
+			if !match(channelItem, filters) {
+				n := News{
+					Title:        channelItem.Title,
+					Descripition: channelItem.Description,
+					Link:         channelItem.Link,
+					Newspaper:    section.Newspaper,
+					Section:      section.Name,
+				}
+
+				results = append(results, n)
+			}
+		}
+	}
+
+	return results
+}
+
+func getNews(db *sql.DB, id int64, filter string) []News {
 	row := db.QueryRow(NewsByID, id)
 
 	var uri string
@@ -101,8 +141,15 @@ func getNews(db *sql.DB, id int, filter string) []News {
 		return nil
 	}
 
+	noFilter := filter == ``
+
 	for _, channelItem := range document.Channel.Item {
-		if !match(channelItem, filter) {
+		m := false
+		if !noFilter {
+			m = match(channelItem, strings.Split(filter, separator))
+		}
+
+		if !m {
 			n := News{
 				Title:        channelItem.Title,
 				Descripition: channelItem.Description,
@@ -118,13 +165,8 @@ func getNews(db *sql.DB, id int, filter string) []News {
 	return results
 }
 
-func match(i item, filters string) bool {
-	if filters == `` {
-		return false
-	}
-
-	filterList := strings.Split(filters, separator)
-	for _, filter := range filterList {
+func match(i item, filters []string) bool {
+	for _, filter := range filters {
 		filter = strings.ToLower(strings.TrimSpace(filter))
 		matched, err := regexp.MatchString(filter, strings.ToLower(i.Title))
 

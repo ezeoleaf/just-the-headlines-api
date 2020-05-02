@@ -38,6 +38,32 @@ func GetFilters(db *sql.DB) FilterCollection {
 	return result
 }
 
+func getFiltersByUser(db *sql.DB, userID int64) []string {
+	rows, err := db.Query(getUserFilters, userID)
+
+	if err == sql.ErrNoRows {
+		return nil
+	} else if err != nil {
+		panic(err)
+	}
+
+	defer rows.Close()
+
+	result := []string{}
+	for rows.Next() {
+		f := Filter{}
+		e := rows.Scan(&f.ID, &f.Filter)
+
+		if e != nil {
+			panic(e)
+		}
+
+		result = append(result, f.Filter)
+	}
+
+	return result
+}
+
 func PostFilter(db *sql.DB, filter string, userID int64) (int64, error) {
 	var filterID int64
 

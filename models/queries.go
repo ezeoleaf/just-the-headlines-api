@@ -15,6 +15,11 @@ const SectionsByName = `SELECT s.id, s.name, s.rss, s.failed, n.name FROM sectio
 INNER JOIN newspaper n ON s.newspaper_id = n.id
 WHERE UPPER(s.name) LIKE '%' || $1 || '%'`
 
+const getUserSections = `SELECT s.id, s.name, s.rss, s.failed, n.name FROM section s
+INNER JOIN newspaper n ON s.newspaper_id = n.id
+INNER JOIN subscription subs ON subs.section_id = s.id
+WHERE subs.user_id=?`
+
 const subscribeUser = `INSERT INTO subscription(section_id, user_id) VALUES(?, ?)`
 const unsubscribeUser = `DELETE FROM subscription WHERE section_id=? AND user_id=?`
 
@@ -53,3 +58,4 @@ const getUserFilter = `SELECT id FROM user_filter WHERE user_id=($1) AND filter_
 const searchFilter = `SELECT id FROM filter WHERE UPPER(filter) = UPPER($1)`
 const createFilter = `INSERT INTO filter(filter) VALUES(?)`
 const getFilters = `SELECT id, filter FROM filter`
+const getUserFilters = `SELECT f.id, f.filter FROM filter f INNER JOIN user_filter uf ON (f.id = uf.filter_id) WHERE uf.user_id=?`

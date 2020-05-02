@@ -53,7 +53,7 @@ func initRoutes(e *echo.Echo, db *sql.DB) {
 	e.GET("/newspapers/country/:code", handlers.GetNewspapersByCountry(db), isLoggedIn)
 	e.GET("/newspapers/name/:name", handlers.GetNewspapersByName(db), isLoggedIn)
 
-	// e.GET("/news", handlers.GetNews(db), isLoggedIn)
+	e.GET("/news", handlers.GetNews(db), isLoggedIn)
 	e.GET("/news/:id", handlers.GetNewsBySection(db), isLoggedIn)
 	e.GET("/news/:id/:filter", handlers.GetFilteredNews(db), isLoggedIn)
 	e.GET("/news/multiple/:sections/:filter", handlers.GetFilteredMultipleNews(db), isLoggedIn)

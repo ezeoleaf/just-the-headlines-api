@@ -35,6 +35,17 @@ func sectionsFromRows(rows *sql.Rows) Sections {
 	return sections
 }
 
+func getSectionsByUser(db *sql.DB, userID int64) Sections {
+	rows, err := db.Query(getUserSections, userID)
+	if err != nil {
+		panic(err)
+	}
+
+	defer rows.Close()
+
+	return sectionsFromRows(rows)
+}
+
 // GetSectionsByName returns an instance of Sections filtered by section name
 func GetSectionsByName(db *sql.DB, name string) Sections {
 	rows, err := db.Query(SectionsByName, name)
