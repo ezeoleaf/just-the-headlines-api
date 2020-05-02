@@ -46,3 +46,9 @@ func LoginUser(db *sql.DB) echo.HandlerFunc {
 		})
 	}
 }
+
+// func UserFilter(db *sql.DB, attach bool) echo.HandlerFunc {
+// 	return func(c echo.Context) error {
+
+// 	}
+// }

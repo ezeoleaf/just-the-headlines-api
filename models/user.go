@@ -13,7 +13,7 @@ import (
 )
 
 type user struct {
-	ID       int
+	ID       int64
 	Username string
 	Password string
 }
@@ -91,3 +91,36 @@ func PostUser(db *sql.DB, email string, username string, password string) (int64
 
 	return r.LastInsertId()
 }
+
+func AttachFilter(db *sql.DB, userID int64, filterID int64) (int64, error) {
+	var userFilterID int64
+	var filterErr error
+	row := db.QueryRow(getUserFilter, userID, filterID)
+	err := row.Scan(&userFilterID)
+
+	if err == sql.ErrNoRows {
+		smtm, e := db.Prepare(attachFilter)
+
+		if e != nil {
+			panic(e)
+		}
+
+		defer smtm.Close()
+
+		r, e := smtm.Exec(userID, filterID)
+
+		if e != nil {
+			panic(e)
+		}
+
+		userFilterID, filterErr = r.LastInsertId()
+	} else if err != nil {
+		panic(err)
+	}
+
+	return userFilterID, filterErr
+}
+
+// func DetachFilter(userID int64, filterID int64) (int64, error) {
+
+// }

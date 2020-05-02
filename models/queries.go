@@ -44,7 +44,8 @@ const newUser = `INSERT INTO user(email, username, password) VALUES(?, ?, ?)`
 const loginUser = `SELECT id, username, password FROM user WHERE username=$1`
 const attachFilter = `INSERT INTO user_filter(user_id, filter_id) VALUES(?, ?)`
 const detachFilter = `DELETE FROM user_filter WHERE user_id=? AND filter_id=?`
-const getUserFilter = `SELECT count(id) FROM user_filter WHERE user_id=($1) AND filter_id=($2)`
+const getUserFilter = `SELECT id FROM user_filter WHERE user_id=($1) AND filter_id=($2)`
 
 // Filter Queries
-const searchFilter = `SELECT id FROM filter WHERE UPPER(name) = UPPER($1)`
+const searchFilter = `SELECT id FROM filter WHERE UPPER(filter) = UPPER($1)`
+const createFilter = `INSERT INTO filter(filter) VALUES(?)`
