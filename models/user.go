@@ -2,11 +2,12 @@ package models
 
 import (
 	"database/sql"
-	"errors"
+	"net/http"
 	"os"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/labstack/echo"
 
 	_ "github.com/joho/godotenv/autoload"
 	"golang.org/x/crypto/bcrypt"
@@ -43,7 +44,7 @@ func LoginUser(db *sql.DB, username string, password string) (string, error) {
 	logged := validatePasswordHash(password, u.Password)
 
 	if !logged {
-		return "", errors.New("Bad credentials")
+		return "", echo.NewHTTPError(http.StatusNonAuthoritativeInfo, "Please provide valid credentials") //errors.New("Bad credentials")
 	}
 
 	token := generateToken(u)
