@@ -66,7 +66,7 @@ func GetNewspapersByCountry(db *sql.DB, countryCode string) Newspapers {
 	return newspapersFromRows(rows)
 }
 
-func GetNewspaper(db *sql.DB, id int) Newspaper {
+func GetNewspaper(db *sql.DB, id int, userID int64) Newspaper {
 	n := Newspaper{}
 
 	row := db.QueryRow(NewspaperByID, id)
@@ -76,7 +76,7 @@ func GetNewspaper(db *sql.DB, id int) Newspaper {
 		panic(e)
 	}
 
-	sections := GetSectionsByNewspaper(db, id)
+	sections := GetSectionsByNewspaper(db, id, userID)
 
 	n.Sections = sections.Sections
 

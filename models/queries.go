@@ -8,7 +8,11 @@ INNER JOIN newspaper n ON s.newspaper_id = n.id
 WHERE UPPER(s.name) LIKE '%' || $1 || '%'`
 
 // SectionsByNewspaper is used for return a list of sections by newspaper.id
-const SectionsByNewspaper = `SELECT id, name, rss, failed, "" FROM section WHERE newspaper_id=$1`
+const SectionsByNewspaper = `SELECT s.id, s.name, s.rss, s.failed, "",
+CASE WHEN subs.user_id IS NULL THEN false ELSE true END
+FROM section s
+LEFT JOIN subscription subs ON (subs.section_id = s.id AND subs.user_id=$2 )
+WHERE s.newspaper_id=$1`
 
 // SectionsByName is used for return a list of sections filtering by section.name
 const SectionsByName = `SELECT s.id, s.name, s.rss, s.failed, n.name FROM section s

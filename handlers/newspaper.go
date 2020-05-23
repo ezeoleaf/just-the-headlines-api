@@ -33,6 +33,7 @@ func GetNewspapersByName(db *sql.DB) echo.HandlerFunc {
 func GetNewspaper(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
-		return c.JSON(http.StatusOK, models.GetNewspaper(db, id))
+		userID, _ := getUserFromJWT(c)
+		return c.JSON(http.StatusOK, models.GetNewspaper(db, id, userID))
 	}
 }

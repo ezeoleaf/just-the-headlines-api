@@ -7,11 +7,12 @@ import (
 
 // Section contains information related to the section table in the database
 type Section struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	RSS       string `json:"rss"`
-	Failed    bool   `json:"failed"`
-	Newspaper string `json:"newspaper"`
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	RSS        string `json:"rss"`
+	Failed     bool   `json:"failed"`
+	Newspaper  string `json:"newspaper"`
+	Subscribed bool   `json:"subscribed"`
 }
 
 // Sections is a list of Section
@@ -23,7 +24,7 @@ func sectionsFromRows(rows *sql.Rows) Sections {
 	sections := Sections{}
 	for rows.Next() {
 		s := Section{}
-		e := rows.Scan(&s.ID, &s.Name, &s.RSS, &s.Failed, &s.Newspaper)
+		e := rows.Scan(&s.ID, &s.Name, &s.RSS, &s.Failed, &s.Newspaper, &s.Subscribed)
 
 		if e != nil {
 			panic(e)
@@ -59,8 +60,8 @@ func GetSectionsByName(db *sql.DB, name string) Sections {
 }
 
 // GetSectionsByNewspaper returns an instance of Sections filtered by newspaperID
-func GetSectionsByNewspaper(db *sql.DB, newspaperID int) Sections {
-	rows, err := db.Query(SectionsByNewspaper, newspaperID)
+func GetSectionsByNewspaper(db *sql.DB, newspaperID int, userID int64) Sections {
+	rows, err := db.Query(SectionsByNewspaper, newspaperID, userID)
 	if err != nil {
 		panic(err)
 	}
