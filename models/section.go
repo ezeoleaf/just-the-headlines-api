@@ -48,8 +48,8 @@ func getSectionsByUser(db *sql.DB, userID int64) Sections {
 }
 
 // GetSectionsByName returns an instance of Sections filtered by section name
-func GetSectionsByName(db *sql.DB, name string) Sections {
-	rows, err := db.Query(SectionsByName, name)
+func GetSectionsByName(db *sql.DB, name string, userID int64) Sections {
+	rows, err := db.Query(SectionsByName, name, userID)
 	if err != nil {
 		panic(err)
 	}

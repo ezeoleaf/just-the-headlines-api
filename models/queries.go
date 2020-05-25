@@ -15,11 +15,14 @@ LEFT JOIN subscription subs ON (subs.section_id = s.id AND subs.user_id=$2 )
 WHERE s.newspaper_id=$1`
 
 // SectionsByName is used for return a list of sections filtering by section.name
-const SectionsByName = `SELECT s.id, s.name, s.rss, s.failed, n.name FROM section s
+const SectionsByName = `SELECT s.id, s.name, s.rss, s.failed, n.name,
+CASE WHEN subs.user_id IS NULL THEN false ELSE true END
+FROM section s
 INNER JOIN newspaper n ON s.newspaper_id = n.id
+LEFT JOIN subscription subs ON (subs.section_id = s.id AND subs.user_id=$2 )
 WHERE UPPER(s.name) LIKE '%' || $1 || '%'`
 
-const getUserSections = `SELECT s.id, s.name, s.rss, s.failed, n.name FROM section s
+const getUserSections = `SELECT s.id, s.name, s.rss, s.failed, n.name, true FROM section s
 INNER JOIN newspaper n ON s.newspaper_id = n.id
 INNER JOIN subscription subs ON subs.section_id = s.id
 WHERE subs.user_id=?`

@@ -13,7 +13,8 @@ import (
 func GetSectionsByName(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		name := strings.ToUpper(c.Param("name"))
-		return c.JSON(http.StatusOK, models.GetSectionsByName(db, name))
+		userID, _ := getUserFromJWT(c)
+		return c.JSON(http.StatusOK, models.GetSectionsByName(db, name, userID))
 	}
 }
 
