@@ -70,6 +70,7 @@ func GetNewspaper(db *sql.DB, id int, userID int64) Newspaper {
 	n := Newspaper{}
 
 	row := db.QueryRow(NewspaperByID, id)
+
 	e := row.Scan(&n.ID, &n.Name, &n.Country, &n.CountryCode)
 
 	if e != nil {

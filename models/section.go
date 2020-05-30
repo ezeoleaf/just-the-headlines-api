@@ -61,6 +61,9 @@ func GetSectionsByName(db *sql.DB, name string, userID int64) Sections {
 
 // GetSectionsByNewspaper returns an instance of Sections filtered by newspaperID
 func GetSectionsByNewspaper(db *sql.DB, newspaperID int, userID int64) Sections {
+	fmt.Println("NEWSPAPER")
+	fmt.Println(newspaperID)
+	fmt.Println(SectionsByNewspaper)
 	rows, err := db.Query(SectionsByNewspaper, newspaperID, userID)
 	if err != nil {
 		panic(err)
